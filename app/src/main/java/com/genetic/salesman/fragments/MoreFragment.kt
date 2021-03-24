@@ -67,7 +67,7 @@ class MoreFragment : Fragment() {
             )
         ) }
         binding.contact.setOnClickListener { (requireActivity() as MainActivity).openOtherFragment(
-            ContactUsFragment()
+            AddSalesmanFragment()
         ) }
         binding.logout.setOnClickListener {
             preference!!.clearAllPreferenceData()

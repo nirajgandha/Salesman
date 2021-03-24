@@ -219,6 +219,9 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
             is ContactUsFragment -> {
                 onItemClick(getString(R.string.menu_more))
             }
+            is AddSalesmanFragment -> {
+                onItemClick(getString(R.string.menu_more))
+            }
             else -> {
                 onItemClick(getString(R.string.menu_home))
             }
