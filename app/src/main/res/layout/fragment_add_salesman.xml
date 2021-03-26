@@ -103,7 +103,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/outlinedTextField"
+                    android:id="@+id/sales_man_user"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -262,10 +262,9 @@
                         style="@style/sales_form_field_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
                         android:drawableEnd="@drawable/ic_calendar"
-                        android:enabled="false"
-                        android:focusable="true" />
+                        android:enabled="true"
+                        android:focusable="false" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -378,12 +377,12 @@
                         style="@style/sales_form_field_address_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
                         android:minLines="2" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <CheckBox
+                    android:id="@+id/checkbox_same_as_current_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:buttonTint="@color/product_option_dialog_title_background"
@@ -404,7 +403,6 @@
                         style="@style/sales_form_field_address_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
                         android:minLines="2" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -462,7 +460,8 @@
 
                 <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,2">
                     <TableRow>
 
                         <TextView
@@ -473,13 +472,15 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/_10ssp" />
 
-                        <Button
+                        <TextView
                             android:id="@+id/btn_select_resume"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_order_detail_subtotal_bg"
+                            android:background="@drawable/ic_dialog_ok_bg"
                             android:fontFamily="@font/montserrat_medium"
+                            android:textSize="@dimen/_12ssp"
                             android:text="Select"
+                            android:gravity="center"
                             android:textColor="@color/white" />
 
                         <TextView
@@ -502,13 +503,15 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/_10ssp" />
 
-                        <Button
+                        <TextView
                             android:id="@+id/btn_select_joining_letter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_order_detail_subtotal_bg"
+                            android:background="@drawable/ic_dialog_ok_bg"
                             android:fontFamily="@font/montserrat_medium"
+                            android:textSize="@dimen/_12ssp"
                             android:text="Select"
+                            android:gravity="center"
                             android:textColor="@color/white" />
 
                         <TextView
@@ -531,13 +534,15 @@
                             android:textColor="@color/black"
                             android:textSize="@dimen/_10ssp" />
 
-                        <Button
+                        <TextView
                             android:id="@+id/btn_select_other_documents"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/rounded_order_detail_subtotal_bg"
+                            android:background="@drawable/ic_dialog_ok_bg"
                             android:fontFamily="@font/montserrat_medium"
+                            android:textSize="@dimen/_12ssp"
                             android:text="Select"
+                            android:gravity="center"
                             android:textColor="@color/white" />
 
                         <TextView

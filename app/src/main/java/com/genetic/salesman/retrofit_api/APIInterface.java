@@ -15,6 +15,8 @@ import com.genetic.salesman.model.ProductListResponse;
 import com.genetic.salesman.model.ProductOptionListResponse;
 import com.genetic.salesman.model.UpdateProfileResponse;
 
+import org.jetbrains.annotations.NotNull;
+
 import okhttp3.*;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -88,4 +90,27 @@ public interface APIInterface {
     @FormUrlEncoded
     @POST(ServerConfig.GET_DASHBOARD)
     Call<DashboardResponse> getDashboard(@Field("dealer_id") String dealer_id);
+
+    @Multipart
+    @POST(ServerConfig.ADD_SALES_MAN)
+    Call addSalesman(@Part("code") RequestBody code,
+                     @Part("user") RequestBody user,
+                     @Part("first_name") RequestBody first_name,
+                     @Part("last_name") RequestBody last_name,
+                     @Part("father_name") RequestBody father_name,
+                     @Part("mother_name") RequestBody mother_name,
+                     @Part("gender") RequestBody gender,
+                     @Part("dob") RequestBody dob,
+                     @Part("mobileno") RequestBody mobileno,
+                     @Part("emergency_no") RequestBody emergency_no,
+                     @Part("date_of_joining") RequestBody date_of_joining,
+                     @Part("marital_status") RequestBody marital_status,
+                     @Part("qualification") RequestBody qualification,
+                     @Part("experience") RequestBody experience,
+                     @Part("current_address") RequestBody current_address,
+                     @Part("permanet_address") RequestBody permanet_address,
+                     @Part MultipartBody.Part avatar,
+                     @Part MultipartBody.Part resume,
+                     @Part MultipartBody.Part joining_letter,
+                     @Part MultipartBody.Part other_document);
 }

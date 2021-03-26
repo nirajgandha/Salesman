@@ -16,4 +16,5 @@ public class ServerConfig {
     static final String GET_PROFILE = "getDealerDetail";
     static final String UPDATE_PROFILE = "updateProfile";
     static final String GET_DASHBOARD = "getDealerDashboard";
+    static final String ADD_SALES_MAN = "getDealerDashboard";
 }
