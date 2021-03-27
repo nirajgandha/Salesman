@@ -26,7 +26,6 @@ import com.genetic.salesman.model.Menus
 import com.genetic.salesman.model.ProductCategoryItem
 import com.genetic.salesman.model.ProductCategoryResponse
 import com.genetic.salesman.retrofit_api.APIClient
-import com.genetic.salesman.fragments.*
 import com.genetic.salesman.utils.AppConstant
 import com.genetic.salesman.utils.Utils
 import retrofit2.Call
@@ -75,7 +74,7 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
 
     private fun getProductCategories() {
         Utils.showProgress(this)
-        APIClient.getApiInterface().getProductCategory(preference?.getString(AppConstant.DEALER_ID, ""))
+        APIClient.getApiInterface().getProductCategory(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<ProductCategoryResponse>{
                 override fun onResponse(call: Call<ProductCategoryResponse>, response: Response<ProductCategoryResponse>) {
                     Utils.hideProgress()
@@ -156,7 +155,7 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
 
     override fun onItemClick(menu_name: String) {
         if (menu_name == getString(R.string.menu_home)) {
-            if (preference!!.getString(AppConstant.DEALER_ID,"").isEmpty()) {
+            if (preference!!.getString(AppConstant.SALESMAN_ID,"").isEmpty()) {
                 gotoLoginActivity()
             } else {
                 if (selectedFragment !is HomeFragment) {
@@ -165,7 +164,7 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
                 setSelected(0)
             }
         } else if (menu_name == getString(R.string.menu_order)) {
-            if (preference!!.getString(AppConstant.DEALER_ID,"").isEmpty()) {
+            if (preference!!.getString(AppConstant.SALESMAN_ID,"").isEmpty()) {
                 gotoLoginActivity()
             } else {
                 if (selectedFragment !is OrderFragment) {
@@ -174,7 +173,7 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
                 setSelected(1)
             }
         } else if (menu_name == getString(R.string.menu_payment)) {
-            if (preference!!.getString(AppConstant.DEALER_ID,"").isEmpty()) {
+            if (preference!!.getString(AppConstant.SALESMAN_ID,"").isEmpty()) {
                 gotoLoginActivity()
             } else {
                 if (selectedFragment !is PaymentFragment) {
@@ -183,7 +182,7 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
                 setSelected(2)
             }
         } else if (menu_name == getString(R.string.menu_more)) {
-            if (preference!!.getString(AppConstant.DEALER_ID,"").isEmpty()) {
+            if (preference!!.getString(AppConstant.SALESMAN_ID,"").isEmpty()) {
                 gotoLoginActivity()
             } else {
                 if (selectedFragment !is MoreFragment) {
@@ -219,7 +218,7 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
             is ContactUsFragment -> {
                 onItemClick(getString(R.string.menu_more))
             }
-            is AddSalesmanFragment -> {
+            is AddDealerFragment -> {
                 onItemClick(getString(R.string.menu_more))
             }
             else -> {

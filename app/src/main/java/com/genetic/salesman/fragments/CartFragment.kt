@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +15,7 @@ import com.genetic.salesman.activity.MainActivity
 import com.genetic.salesman.adapter.CartAdapter
 import com.genetic.salesman.databinding.FragmentCartBinding
 import com.genetic.salesman.interfaces.CartProductListener
+import com.genetic.salesman.model.DealerListResponse
 import com.genetic.salesman.model.PercentageResponse
 import com.genetic.salesman.model.PlaceOrderResponse
 import com.genetic.salesman.retrofit_api.APIClient
@@ -26,12 +29,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class CartFragment: Fragment(), CartProductListener {
+class CartFragment : Fragment(), CartProductListener {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
     private val cartProductListener: CartProductListener = this
     private var preference: Preference? = null
     private var taxPercent: Double = 0.0
+    private var dealer_id = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,14 +60,21 @@ class CartFragment: Fragment(), CartProductListener {
             )
         )
         binding.submitCl.setOnClickListener {
+            if (dealer_id.isEmpty()) {
+                showError("Select Dealer")
+                return@setOnClickListener
+            }
             callPlaceOrder()
+        }
+        (binding.dealerId.editText as AutoCompleteTextView).setOnItemClickListener { _, _, position, _ ->
+            dealer_id = idArray[position]
         }
     }
 
     private fun getTaxPercentage() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getTaxPercentage(preference?.getString(AppConstant.DEALER_ID, ""))
+            .getTaxPercentage(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<PercentageResponse> {
                 override fun onResponse(
                     call: Call<PercentageResponse>,
@@ -82,6 +93,7 @@ class CartFragment: Fragment(), CartProductListener {
                         showError(response.message())
                     }
                     loadTotals()
+                    getDealerList()
                 }
 
                 override fun onFailure(call: Call<PercentageResponse>, t: Throwable) {
@@ -89,6 +101,49 @@ class CartFragment: Fragment(), CartProductListener {
                     showError("Error occurred!! Please try again later")
                     t.printStackTrace()
                     loadTotals()
+                    getDealerList()
+                }
+
+            })
+    }
+
+    var idArray: Array<String> = emptyArray()
+    private fun getDealerList() {
+        Utils.showProgress(requireContext())
+        APIClient.getApiInterface()
+            .getDealerList(preference?.getString(AppConstant.PHONE, ""))
+            .enqueue(object : Callback<DealerListResponse> {
+                override fun onResponse(
+                    call: Call<DealerListResponse>,
+                    response: Response<DealerListResponse>
+                ) {
+                    Utils.hideProgress()
+                    val body = response.body()
+                    if (body != null) {
+                        val meta = body.meta
+                        if (meta.code.equals("200")) {
+                            val array: Array<String> = Array(body.data.size) { "" }
+                            idArray = Array(body.data.size) { "" }
+                            for (index in 0 until body.data.size) {
+                                val item = body.data[index]
+                                array[index] = "${item.firmName} - ${item.responsiblePersonName}"
+                                idArray[index] = item.id.toString()
+                            }
+                            val adapter =
+                                ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, array)
+                            (binding.dealerId.editText as AutoCompleteTextView).setAdapter(adapter)
+                        } else {
+                            showError(meta.message)
+                        }
+                    } else {
+                        showError(response.message())
+                    }
+                }
+
+                override fun onFailure(call: Call<DealerListResponse>, t: Throwable) {
+                    Utils.hideProgress()
+                    showError("Error occurred!! Please try again later")
+                    t.printStackTrace()
                 }
 
             })
@@ -109,10 +164,14 @@ class CartFragment: Fragment(), CartProductListener {
                     if (body != null) {
                         val meta = body.meta
                         if (meta.code.equals("200")) {
-                            (requireContext().applicationContext as DealerApplication).getProductCartList().clear()
+                            (requireContext().applicationContext as DealerApplication).getProductCartList()
+                                .clear()
                             val bundle = Bundle()
                             bundle.putString("orderId", body.data.orderList[0].orderId)
-                            bundle.putString("amount", body.data.orderAmount.orderTotalAmount.toString())
+                            bundle.putString(
+                                "amount",
+                                body.data.orderAmount.orderTotalAmount.toString()
+                            )
                             val thankYouFragment = ThankYouFragment()
                             thankYouFragment.arguments = bundle
                             (requireActivity() as MainActivity).openOtherFragment(thankYouFragment)
@@ -147,7 +206,7 @@ class CartFragment: Fragment(), CartProductListener {
         }
 
         val finalJsonObject = JSONObject()
-        finalJsonObject.put("dealer_id", preference?.getString(AppConstant.DEALER_ID, ""))
+        finalJsonObject.put("dealer_id", dealer_id)
         finalJsonObject.put("order", jsonArray)
         return finalJsonObject.toString()
     }
@@ -166,7 +225,7 @@ class CartFragment: Fragment(), CartProductListener {
         for (index in cart.entries) {
             subtotal += (index.value.productOption.optionAmount * index.value.quantity)
         }
-        val tax = (subtotal * (taxPercent/100))
+        val tax = (subtotal * (taxPercent / 100))
         val discount = 0.0
         val deliveryCharge = 0.0
         val total = subtotal + tax - discount + deliveryCharge

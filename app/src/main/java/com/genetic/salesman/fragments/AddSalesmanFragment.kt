@@ -371,9 +371,9 @@ class AddSalesmanFragment : Fragment() {
             )
             MultipartBody.Part.createFormData("other_document", file.name, fileBody)
         }
-        APIClient.getApiInterface().addSalesman(code, user, first_name, last_name, father_name, mother_name, gender,
+        /*APIClient.getApiInterface().addSalesman(code, user, first_name, last_name, father_name, mother_name, gender,
         dob, mobileno, emergency_no, date_of_joining, marital_status, qualification, experience, current_address, permanet_address,
-        avatar, resume, joining_letter, other_document)
+        avatar, resume, joining_letter, other_document)*/
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -56,7 +56,7 @@ class PaymentFragment : Fragment(), PaymentItemClickListener {
     private fun callGetPaymentList() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getPaymentList(preference?.getString(AppConstant.DEALER_ID, ""))
+            .getPaymentList(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<PaymentListResponse> {
                 override fun onResponse(
                     call: Call<PaymentListResponse>,

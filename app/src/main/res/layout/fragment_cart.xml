@@ -101,6 +101,22 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/dealer_id"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Dealer"
+                app:hintTextColor="@color/product_option_dialog_title_background"
+                app:layout_constraintTop_toBottomOf="@+id/coupon_cl"
+                app:layout_constraintStart_toStartOf="parent">
+
+            <AutoCompleteTextView
+                style="@style/sales_form_field_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -108,7 +124,7 @@
                 android:textAllCaps="true"
                 android:layout_marginStart="@dimen/_7sdp"
                 android:layout_marginTop="@dimen/_7sdp"
-                app:layout_constraintTop_toBottomOf="@+id/coupon_cl"
+                app:layout_constraintTop_toBottomOf="@+id/dealer_id"
                 app:layout_constraintStart_toStartOf="parent"
                 android:textColor="#7F7E7D"
                 android:fontFamily="@font/montserrat_regular"

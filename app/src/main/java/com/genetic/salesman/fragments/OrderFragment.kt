@@ -56,7 +56,7 @@ class OrderFragment : Fragment(), OrderItemClickListener {
     private fun callGetOrderList() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getOrderList(preference?.getString(AppConstant.DEALER_ID, ""))
+            .getOrderList(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<OrderListResponse> {
                 override fun onResponse(
                     call: Call<OrderListResponse>,

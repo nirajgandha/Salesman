@@ -2,7 +2,6 @@ package com.genetic.salesman.retrofit_api;
 
 import com.genetic.salesman.model.*;
 import com.genetic.salesman.model.DashboardResponse;
-import com.genetic.salesman.model.GetProfileResponse;
 import com.genetic.salesman.model.LoginResponse;
 import com.genetic.salesman.model.OrderDetailResponse;
 import com.genetic.salesman.model.OrderListResponse;
@@ -13,7 +12,7 @@ import com.genetic.salesman.model.PlaceOrderResponse;
 import com.genetic.salesman.model.ProductCategoryResponse;
 import com.genetic.salesman.model.ProductListResponse;
 import com.genetic.salesman.model.ProductOptionListResponse;
-import com.genetic.salesman.model.UpdateProfileResponse;
+import com.genetic.salesman.model.SalesmanProfileUpdateResponse;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -76,26 +75,19 @@ public interface APIInterface {
 
     @FormUrlEncoded
     @POST(ServerConfig.GET_PROFILE)
-    Call<GetProfileResponse> getProfile(@Field("phone") String phone);
+    Call<SalesmanProfileResponse> getProfile(@Field("phone") String phone);
 
-    @Multipart
-    @POST(ServerConfig.UPDATE_PROFILE)
-    Call<UpdateProfileResponse> updateProfile(@Part("dealer_id") RequestBody dealer_id,
-                                              @Part("responsible_person_name") RequestBody responsible_person_name,
-                                              @Part("whatsappno") RequestBody whatsappno,
-                                              @Part("mobileno") RequestBody mobileno,
-                                              @Part("dob") RequestBody dob,
-                                              @Part MultipartBody.Part image);
+    @FormUrlEncoded
+    @POST(ServerConfig.GET_DEALER_LIST)
+    Call<DealerListResponse> getDealerList(@Field("phone") String phone);
 
     @FormUrlEncoded
     @POST(ServerConfig.GET_DASHBOARD)
     Call<DashboardResponse> getDashboard(@Field("dealer_id") String dealer_id);
 
     @Multipart
-    @POST(ServerConfig.ADD_SALES_MAN)
-    Call addSalesman(@Part("code") RequestBody code,
-                     @Part("user") RequestBody user,
-                     @Part("first_name") RequestBody first_name,
+    @POST(ServerConfig.UPDATE_PROFILE)
+    Call<SalesmanProfileUpdateResponse> addSalesman(@Part("first_name") RequestBody first_name,
                      @Part("last_name") RequestBody last_name,
                      @Part("father_name") RequestBody father_name,
                      @Part("mother_name") RequestBody mother_name,
@@ -108,9 +100,75 @@ public interface APIInterface {
                      @Part("qualification") RequestBody qualification,
                      @Part("experience") RequestBody experience,
                      @Part("current_address") RequestBody current_address,
-                     @Part("permanet_address") RequestBody permanet_address,
+                     @Part("permanent_address") RequestBody permanet_address,
                      @Part MultipartBody.Part avatar,
                      @Part MultipartBody.Part resume,
                      @Part MultipartBody.Part joining_letter,
                      @Part MultipartBody.Part other_document);
+
+    @Multipart
+    @POST(ServerConfig.ADD_DEALER)
+    Call<DealerRegistrationResponse> addDealer(@Part("salesman_id") RequestBody salesman_id,
+                   @Part("firm_name") RequestBody firm_name,
+                   @Part("dealer_qualification") RequestBody dealer_qualification,
+                   @Part("responsible_person_name") RequestBody responsible_person_name,
+                   @Part("residential_address") RequestBody residential_address,
+                   @Part("mobile_no") RequestBody mobile_no,
+                   @Part("whatsapp_no") RequestBody whatsapp_no,
+                   @Part("date_of_birth") RequestBody date_of_birth,
+                   @Part("date_of_anniversary") RequestBody date_of_anniversary,
+                   @Part("year_of_establishment") RequestBody year_of_establishment,
+                   @Part("nature_of_firm") RequestBody nature_of_firm,
+                   @Part("total_turnover") RequestBody total_turnover,
+                   @Part("pesticide") RequestBody pesticide,
+                   @Part("fertilizers") RequestBody fertilizers,
+                   @Part("pgr_other") RequestBody pgr_other,
+                   @Part("ownership_of_shop") RequestBody ownership_of_shop,
+                   @Part("other_agency_names") RequestBody other_agency_names,
+                   @Part("gst_no") RequestBody gst_no,
+                   @Part("adharcard_no") RequestBody adharcard_no,
+                   @Part("pan_card_no") RequestBody pan_card_no,
+                   @Part("name_of_bank") RequestBody name_of_bank,
+                   @Part("bank_ac_no") RequestBody bank_ac_no,
+                   @Part("ifsc_code") RequestBody ifsc_code,
+                   @Part("insecticide_license_no") RequestBody insecticide_license_no,
+                   @Part("insecticide_license_validity") RequestBody insecticide_license_validity,
+                   @Part("fertilizer_license_no") RequestBody fertilizer_license_no,
+                   @Part("fertilizer_license_validity") RequestBody fertilizer_license_validity,
+                   @Part("amount_of_first_cheque") RequestBody amount_of_first_cheque,
+                   @Part("amount_of_first_cheque_no") RequestBody amount_of_first_cheque_no,
+                   @Part("amount_of_cheque_2") RequestBody amount_of_cheque_2,
+                   @Part("amount_of_cheque_no_2") RequestBody amount_of_cheque_no_2,
+                   @Part("amount_of_cheque_3") RequestBody amount_of_cheque_3,
+                   @Part("amount_of_cheque_no_3") RequestBody amount_of_cheque_no_3,
+                   @Part("amount_of_cheque_4") RequestBody amount_of_cheque_4,
+                   @Part("amount_of_cheque_no_4") RequestBody amount_of_cheque_no_4,
+                   @Part("firm_address") RequestBody firm_address,
+                   @Part("firm_state_id") RequestBody firm_state_id,
+                   @Part("firm_city_id") RequestBody firm_city_id,
+                   @Part("firm_taluka") RequestBody firm_taluka,
+                   @Part("firm_zipcode") RequestBody firm_zipcode,
+                   @Part("residential_address_1") RequestBody residential_address_1,
+                   @Part("residential_state_id") RequestBody residential_state_id,
+                   @Part("residential_city_id") RequestBody residential_city_id,
+                   @Part("residential_takula") RequestBody residential_takula,
+                   @Part("residential_zipcode") RequestBody residential_zipcode,
+                   @Part MultipartBody.Part avatar,
+                   @Part MultipartBody.Part partnership_memorandum_of_firm_doc ,
+                   @Part MultipartBody.Part pesticide_license_doc,
+                   @Part MultipartBody.Part fertilizer_license_doc,
+                   @Part MultipartBody.Part gst_certificate_doc,
+                   @Part MultipartBody.Part adharcard_doc,
+                   @Part MultipartBody.Part pancard_doc,
+                   @Part MultipartBody.Part electricity_bill_doc,
+                   @Part MultipartBody.Part rent_agreement_doc);
+
+    @FormUrlEncoded
+    @POST(ServerConfig.GET_STATE_LIST)
+    Call<StateListResponse> getStateList(@Field("salesman_id") String salesman_id);
+
+    @FormUrlEncoded
+    @POST(ServerConfig.GET_CITY_LIST)
+    Call<CityListResponse> getCityList(@Field("salesman_id") String salesman_id,
+                                        @Field("state_id") String state_id);
 }

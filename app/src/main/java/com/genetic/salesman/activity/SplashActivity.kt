@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startMainTask() {
-        val id = preference!!.getString(AppConstant.DEALER_ID, "")
+        val id = preference!!.getString(AppConstant.SALESMAN_ID, "")
         Handler().postDelayed({
             val intent = if (id.isEmpty()) {
                 preference!!.clearAllPreferenceData()

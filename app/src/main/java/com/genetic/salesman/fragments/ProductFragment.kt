@@ -68,7 +68,7 @@ class ProductFragment : Fragment(), ProductItemClickListener, ProductOptionListe
     private fun getProductListFromCategory() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getProductList(preference?.getString(AppConstant.DEALER_ID, ""),
+            .getProductList(preference?.getString(AppConstant.SALESMAN_ID, ""),
                 mProductCategoryDetail!![0]
             )
             .enqueue(object : Callback<ProductListResponse> {
@@ -109,7 +109,7 @@ class ProductFragment : Fragment(), ProductItemClickListener, ProductOptionListe
     private fun getProductsOptionList(productListItem: ProductListItem) {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getProductOptionList(preference?.getString(AppConstant.DEALER_ID, ""), productListItem.id.toString())
+            .getProductOptionList(preference?.getString(AppConstant.SALESMAN_ID, ""), productListItem.id.toString())
             .enqueue(object : Callback<ProductOptionListResponse> {
                 override fun onResponse(call: Call<ProductOptionListResponse>,
                                         response: Response<ProductOptionListResponse>)

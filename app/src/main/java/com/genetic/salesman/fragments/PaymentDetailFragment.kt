@@ -59,7 +59,7 @@ class PaymentDetailFragment : Fragment() {
     private fun callGetPaymentDetail() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getPaymentDetail(preference?.getString(AppConstant.DEALER_ID, ""), paymentId)
+            .getPaymentDetail(preference?.getString(AppConstant.SALESMAN_ID, ""), paymentId)
             .enqueue(object : Callback<PaymentDetailResponse> {
                 override fun onResponse(call: Call<PaymentDetailResponse>,
                                         response: Response<PaymentDetailResponse>) {

@@ -49,7 +49,7 @@ class HomeFragment : Fragment() {
 
     private fun getDashboardCategories() {
         Utils.showProgress(requireContext())
-        APIClient.getApiInterface().getProductCategory(preference?.getString(AppConstant.DEALER_ID, ""))
+        APIClient.getApiInterface().getProductCategory(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<ProductCategoryResponse>{
                 override fun onResponse(call: Call<ProductCategoryResponse>, response: Response<ProductCategoryResponse>) {
                     Utils.hideProgress()
@@ -98,7 +98,7 @@ class HomeFragment : Fragment() {
     private fun getDashboardDetails() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getDashboard(preference?.getString(AppConstant.DEALER_ID, ""))
+            .getDashboard(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<DashboardResponse> {
                 override fun onResponse(
                     call: Call<DashboardResponse>,

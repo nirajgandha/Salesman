@@ -67,7 +67,7 @@ class OrderDetailFragment : Fragment() {
     private fun callGetOrderDetail() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getOrderDetail(preference?.getString(AppConstant.DEALER_ID, ""), orderId)
+            .getOrderDetail(preference?.getString(AppConstant.SALESMAN_ID, ""), orderId)
             .enqueue(object : Callback<OrderDetailResponse> {
                 override fun onResponse(
                     call: Call<OrderDetailResponse>,

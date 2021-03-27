@@ -51,7 +51,7 @@ class OtpActivity : AppCompatActivity() {
                     if (meta.code.equals("200", true)){
                         val data = body.loginData
                         val preference = Preference(this@OtpActivity)
-                        preference.setString(AppConstant.DEALER_ID, data.id.toString())
+                        preference.setString(AppConstant.SALESMAN_ID, data.id.toString())
                         preference.setString(AppConstant.PHONE, data.phone.toString())
                         preference.setString(AppConstant.TYPE_OF, data.type)
                         val intent = Intent(this@OtpActivity, MainActivity::class.java)
