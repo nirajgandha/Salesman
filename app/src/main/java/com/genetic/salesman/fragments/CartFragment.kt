@@ -111,7 +111,7 @@ class CartFragment : Fragment(), CartProductListener {
     private fun getDealerList() {
         Utils.showProgress(requireContext())
         APIClient.getApiInterface()
-            .getDealerList(preference?.getString(AppConstant.PHONE, ""))
+            .getDealerList(preference?.getString(AppConstant.SALESMAN_ID, ""))
             .enqueue(object : Callback<DealerListResponse> {
                 override fun onResponse(
                     call: Call<DealerListResponse>,

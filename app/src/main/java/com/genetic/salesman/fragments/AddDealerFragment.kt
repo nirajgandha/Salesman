@@ -16,14 +16,14 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.genetic.salesman.R
 import com.genetic.salesman.activity.MainActivity
 import com.genetic.salesman.databinding.FragmentAddDealerBinding
-import com.genetic.salesman.model.CityListResponse
-import com.genetic.salesman.model.DealerRegistrationResponse
-import com.genetic.salesman.model.StateListResponse
+import com.genetic.salesman.model.*
 import com.genetic.salesman.retrofit_api.APIClient
 import com.genetic.salesman.utils.AppConstant
+import com.genetic.salesman.utils.GlideApp
 import com.genetic.salesman.utils.Preference
 import com.genetic.salesman.utils.Utils
 import okhttp3.MediaType.Companion.toMediaType
@@ -67,6 +67,10 @@ class AddDealerFragment : Fragment() {
     private var selectedResidentialStateId = ""
     private var selectedFirmCityId = ""
     private var selectedResidentialCityId = ""
+    private var isEdit = false
+    private var dealerId = ""
+    private var dealerDataUpdate: DealerDataUpdate? = null
+    private var loadResidentialCityAgain = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,7 +83,16 @@ class AddDealerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         preference = Preference(requireContext())
-        callGetStateListApi()
+        val argument = arguments
+        if (argument != null) {
+            dealerId = argument.getString("editDealerId", "")
+            isEdit = true
+        }
+        if (isEdit) {
+            callGetDealerDetail()
+        } else {
+            callGetStateListApi()
+        }
 
         //Detail
         if (binding.dealerDetailsLl.visibility == View.VISIBLE) {
@@ -361,7 +374,11 @@ class AddDealerFragment : Fragment() {
         }
 
         binding.toolbarLayout.toolbarNavButton.setOnClickListener { (requireActivity() as MainActivity).onBackPressed() }
-        binding.toolbarLayout.screenTitle.text = "Register Dealer"
+        binding.toolbarLayout.screenTitle.text = if (isEdit) {
+            "Update Dealer"
+        } else {
+            "Register Dealer"
+        }
         binding.toolbarLayout.toolbarNavButton.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources,
@@ -503,7 +520,11 @@ class AddDealerFragment : Fragment() {
 //                    return@setOnClickListener
                 }
                 else -> {
-                    callSubmitDetails()
+                    if (isEdit) {
+                        callSubmitDetails()
+                    } else {
+                        callUpdateDetails()
+                    }
                 }
             }
         }
@@ -612,11 +633,11 @@ class AddDealerFragment : Fragment() {
 
         (binding.firmStateId.editText as AutoCompleteTextView).setOnItemClickListener { _, _, position, _ ->
             selectedFirmStateId = stateIdArray[position]
-            callGetCityListApi(true, selectedFirmStateId)
+            callGetFirmCityListApi(selectedFirmStateId)
         }
         (binding.residentialStateId.editText as AutoCompleteTextView).setOnItemClickListener { _, _, position, _ ->
             selectedResidentialStateId = stateIdArray[position]
-            callGetCityListApi(false, selectedResidentialStateId)
+            callGetResidentialCityListApi(selectedResidentialStateId)
         }
         (binding.residentialCityId.editText as AutoCompleteTextView).setOnItemClickListener { _, _, position, _ ->
             selectedResidentialCityId = cityResidentialIdArray[position]
@@ -626,115 +647,10 @@ class AddDealerFragment : Fragment() {
         }
     }
 
-    var stateArray: Array<String> = emptyArray()
-    var stateIdArray: Array<String> = emptyArray()
-    private fun callGetStateListApi() {
-        Utils.showProgress(requireContext())
-        APIClient.getApiInterface().getStateList(preference?.getString(AppConstant.SALESMAN_ID, ""))
-            .enqueue(object : Callback<StateListResponse> {
-                override fun onResponse(
-                    call: Call<StateListResponse>,
-                    response: Response<StateListResponse>
-                ) {
-                    Utils.hideProgress()
-                    val body = response.body()
-                    if (body != null) {
-                        if (body.meta.code.equals("200")) {
-                            stateArray = Array(body.data.size) { "" }
-                            stateIdArray = Array(body.data.size) { "" }
-                            for (index in 0 until body.data.size) {
-                                val item = body.data[index]
-                                stateArray[index] = item.name
-                                stateIdArray[index] = item.id.toString()
-                            }
-                            val firm_adapter = ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, stateArray)
-                            (binding.firmStateId.editText as AutoCompleteTextView).setAdapter(firm_adapter)
-                            val residential_adapter = ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, stateArray)
-                            (binding.residentialStateId.editText as AutoCompleteTextView).setAdapter(residential_adapter)
-                        } else {
-                            showError(body.meta.message)
-                        }
-                    } else {
-                        showError(response.message())
-                    }
-
-                }
-
-                override fun onFailure(call: Call<StateListResponse>, t: Throwable) {
-                    Utils.hideProgress()
-                    t.printStackTrace()
-                    showError(t.message!!)
-                }
-
-            })
-    }
-
-    var cityFirmArray: Array<String> = emptyArray()
-    var cityResidentialArray: Array<String> = emptyArray()
-    var cityFirmIdArray: Array<String> = emptyArray()
-    var cityResidentialIdArray: Array<String> = emptyArray()
-    private fun callGetCityListApi(isForFirm: Boolean, stateId: String) {
-        Utils.showProgress(requireContext())
-        APIClient.getApiInterface().getCityList(preference?.getString(AppConstant.SALESMAN_ID, ""), stateId)
-            .enqueue(object : Callback<CityListResponse> {
-                override fun onResponse(
-                    call: Call<CityListResponse>,
-                    response: Response<CityListResponse>
-                ) {
-                    Utils.hideProgress()
-                    val body = response.body()
-                    if (body != null) {
-                        if (body.meta.code.equals("200")) {
-                            if (isForFirm) {
-                                cityFirmArray = Array(body.data.size) { "" }
-                                cityFirmIdArray = Array(body.data.size) { "" }
-                            } else {
-                                cityResidentialArray = Array(body.data.size) { "" }
-                                cityResidentialIdArray = Array(body.data.size) { "" }
-                            }
-                            for (index in 0 until body.data.size) {
-                                val item = body.data[index]
-                                if (isForFirm) {
-                                    cityFirmArray[index] = item.name
-                                    cityFirmIdArray[index] = item.id.toString()
-                                } else {
-                                    cityResidentialArray[index] = item.name
-                                    cityResidentialIdArray[index] = item.id.toString()
-                                }
-                            }
-                            if (isForFirm) {
-                                val firm_adapter = ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, cityFirmArray)
-                                (binding.firmCityId.editText as AutoCompleteTextView).setAdapter(firm_adapter)
-                                (binding.firmCityId.editText as AutoCompleteTextView).setText("")
-                                selectedFirmCityId = ""
-                            } else {
-                                val residential_adapter = ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, cityResidentialArray)
-                                (binding.residentialCityId.editText as AutoCompleteTextView).setAdapter(residential_adapter)
-                                (binding.residentialCityId.editText as AutoCompleteTextView).setText("")
-                                selectedResidentialCityId = ""
-                            }
-                        } else {
-                            showError(body.meta.message)
-                        }
-                    } else {
-                        showError(response.message())
-                    }
-
-                }
-
-                override fun onFailure(call: Call<CityListResponse>, t: Throwable) {
-                    Utils.hideProgress()
-                    t.printStackTrace()
-                    showError(t.message!!)
-                }
-
-            })
-    }
-
-    private fun callSubmitDetails() {
+    private fun callUpdateDetails() {
         Utils.showProgress(requireContext())
         val mediaType = "text/plain".toMediaType()
-        val salesman_id = preference?.getString(AppConstant.SALESMAN_ID, "")!!.toRequestBody(mediaType)
+        val salesman_id = dealerDataUpdate!!.id.toString().toRequestBody(mediaType)
         val firm_name = binding.firmName.editText?.text.toString().toRequestBody(mediaType)
         val dealer_qualification =
             binding.dealerQualification.editText?.text.toString().toRequestBody(mediaType)
@@ -818,7 +734,7 @@ class AddDealerFragment : Fragment() {
         }
         val partnership_memorandum_of_firm_doc = if (partnershipMemorandumDocFileName.isEmpty()) {
             MultipartBody.Part.createFormData(
-                "partnership_memorandum_of_firm_doc",
+                "partenership_memorandum_of_firm_doc",
                 "",
                 "".toRequestBody(mediaType)
             )
@@ -833,7 +749,593 @@ class AddDealerFragment : Fragment() {
                 )!!.toMediaType()
             )
             MultipartBody.Part.createFormData(
-                "partnership_memorandum_of_firm_doc",
+                "partenership_memorandum_of_firm_doc",
+                file.name,
+                fileBody
+            )
+        }
+        val pesticide_license_doc = if (pesticideFileName.isEmpty()) {
+            MultipartBody.Part.createFormData(
+                "pesticide_license_doc",
+                "",
+                "".toRequestBody(mediaType)
+            )
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                pesticideFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("pesticide_license_doc", file.name, fileBody)
+        }
+        val fertilizer_license_doc = if (fertilizerFileName.isEmpty()) {
+            MultipartBody.Part.createFormData(
+                "fertilizer_license_doc",
+                "",
+                "".toRequestBody(mediaType)
+            )
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                fertilizerFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("fertilizer_license_doc", file.name, fileBody)
+        }
+        val gst_certificate_doc = if (gstCertificateFileName.isEmpty()) {
+            MultipartBody.Part.createFormData(
+                "gst_certificate_doc",
+                "",
+                "".toRequestBody(mediaType)
+            )
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                gstCertificateFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("gst_certificate_doc", file.name, fileBody)
+        }
+        val adharcard_doc = if (adharCardFileName.isEmpty()) {
+            MultipartBody.Part.createFormData("adharcard_doc", "", "".toRequestBody(mediaType))
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                adharCardFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("adharcard_doc", file.name, fileBody)
+        }
+        val pancard_doc = if (panCardFileName.isEmpty()) {
+            MultipartBody.Part.createFormData("pancard_doc", "", "".toRequestBody(mediaType))
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                panCardFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("pancard_doc", file.name, fileBody)
+        }
+        val electricity_bill_doc = if (electricityBillFileName.isEmpty()) {
+            MultipartBody.Part.createFormData(
+                "electricity_bill_doc",
+                "",
+                "".toRequestBody(mediaType)
+            )
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                electricityBillFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("electricity_bill_doc", file.name, fileBody)
+        }
+        val rent_agreement_doc = if (rentAgreementFileName.isEmpty()) {
+            MultipartBody.Part.createFormData("rent_agreement_doc", "", "".toRequestBody(mediaType))
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                rentAgreementFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("rent_agreement_doc", file.name, fileBody)
+        }
+        APIClient.getApiInterface().updateDealer(
+            salesman_id,
+            firm_name,
+            dealer_qualification,
+            responsible_person_name,
+            residential_address,
+            mobile_no,
+            whatsapp_no,
+            date_of_birth,
+            date_of_anniversary,
+            year_of_establishment,
+            nature_of_firm,
+            total_turnover,
+            pesticide,
+            fertilizers,
+            pgr_other,
+            ownership_of_shop,
+            other_agency_names,
+            gst_no,
+            adharcard_no,
+            pan_card_no,
+            name_of_bank,
+            bank_ac_no,
+            ifsc_code,
+            insecticide_license_no,
+            insecticide_license_validity,
+            fertilizer_license_no,
+            fertilizer_license_validity,
+            amount_of_first_cheque,
+            amount_of_first_cheque_no,
+            amount_of_cheque_2,
+            amount_of_cheque_no_2,
+            amount_of_cheque_3,
+            amount_of_cheque_no_3,
+            amount_of_cheque_4,
+            amount_of_cheque_no_4,
+            firm_address,
+            firm_state_id,
+            firm_city_id,
+            firm_taluka,
+            firm_zipcode,
+            residential_address_1,
+            residential_state_id,
+            residential_city_id,
+            residential_takula,
+            residential_zipcode,
+            avatar,
+            partnership_memorandum_of_firm_doc,
+            pesticide_license_doc,
+            fertilizer_license_doc,
+            gst_certificate_doc,
+            adharcard_doc,
+            pancard_doc,
+            electricity_bill_doc,
+            rent_agreement_doc
+        ).enqueue(object : Callback<DealerRegistrationResponse> {
+            override fun onResponse(
+                call: Call<DealerRegistrationResponse>,
+                response: Response<DealerRegistrationResponse>
+            ) {
+                Utils.hideProgress()
+                val body = response.body()
+                if (body != null) {
+                    val meta = body.meta
+                    if (meta.code.equals("200")) {
+                        Handler().postDelayed(
+                            Runnable { (requireActivity() as MainActivity).onBackPressed() },
+                            1500
+                        )
+                    }
+                    showError(meta.message)
+                } else {
+                    showError(response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<DealerRegistrationResponse>, t: Throwable) {
+                Utils.hideProgress()
+                showError("Error occurred!! Please try again later")
+                t.printStackTrace()
+            }
+        })
+    }
+
+    private fun callGetDealerDetail() {
+        Utils.showProgress(requireContext())
+        APIClient.getApiInterface().getDealerDetail(dealerId)
+            .enqueue(object : Callback<GetDealerDataResponse> {
+                override fun onResponse(
+                    call: Call<GetDealerDataResponse>,
+                    response: Response<GetDealerDataResponse>
+                ) {
+                    Utils.hideProgress()
+                    val body = response.body()
+                    if (body != null) {
+                        if (body.meta.code.equals("200")) {
+                            dealerDataUpdate = body.data[0]
+                            callGetStateListApi()
+                        } else {
+                            showError(body.meta.message)
+                        }
+                    } else {
+                        showError(response.message())
+                    }
+
+                }
+
+                override fun onFailure(call: Call<GetDealerDataResponse>, t: Throwable) {
+                    Utils.hideProgress()
+                    t.printStackTrace()
+                    showError(t.message!!)
+                }
+
+            })
+    }
+
+    var stateArray: Array<String> = emptyArray()
+    var stateIdArray: Array<String> = emptyArray()
+    private fun callGetStateListApi() {
+        Utils.showProgress(requireContext())
+        APIClient.getApiInterface().getStateList(preference?.getString(AppConstant.SALESMAN_ID, ""))
+            .enqueue(object : Callback<StateListResponse> {
+                override fun onResponse(
+                    call: Call<StateListResponse>,
+                    response: Response<StateListResponse>
+                ) {
+                    Utils.hideProgress()
+                    val body = response.body()
+                    if (body != null) {
+                        if (body.meta.code.equals("200")) {
+                            stateArray = Array(body.data.size) { "" }
+                            stateIdArray = Array(body.data.size) { "" }
+                            for (index in 0 until body.data.size) {
+                                val item = body.data[index]
+                                stateArray[index] = item.name
+                                stateIdArray[index] = item.id.toString()
+                            }
+                            val firm_adapter = ArrayAdapter(
+                                requireContext(),
+                                R.layout.dropdown_layout_item,
+                                stateArray
+                            )
+                            (binding.firmStateId.editText as AutoCompleteTextView).setAdapter(
+                                firm_adapter
+                            )
+                            val residential_adapter = ArrayAdapter(
+                                requireContext(),
+                                R.layout.dropdown_layout_item,
+                                stateArray
+                            )
+                            (binding.residentialStateId.editText as AutoCompleteTextView).setAdapter(
+                                residential_adapter
+                            )
+                            if (isEdit) {
+                                callGetFirmCityListApi(dealerDataUpdate!!.firmStateId.toString())
+                            }
+                        } else {
+                            showError(body.meta.message)
+                        }
+                    } else {
+                        showError(response.message())
+                    }
+
+                }
+
+                override fun onFailure(call: Call<StateListResponse>, t: Throwable) {
+                    Utils.hideProgress()
+                    t.printStackTrace()
+                    showError(t.message!!)
+                }
+
+            })
+    }
+
+    var cityFirmArray: Array<String> = emptyArray()
+    var cityResidentialArray: Array<String> = emptyArray()
+    var cityFirmIdArray: Array<String> = emptyArray()
+    var cityResidentialIdArray: Array<String> = emptyArray()
+    var dataLoaded = false
+    private fun callGetResidentialCityListApi(stateId: String) {
+        Utils.showProgress(requireContext())
+        APIClient.getApiInterface()
+            .getCityList(preference?.getString(AppConstant.SALESMAN_ID, ""), stateId)
+            .enqueue(object : Callback<CityListResponse> {
+                override fun onResponse(
+                    call: Call<CityListResponse>,
+                    response: Response<CityListResponse>
+                ) {
+                    Utils.hideProgress()
+                    val body = response.body()
+                    if (body != null) {
+                        if (body.meta.code.equals("200")) {
+                            cityResidentialArray = Array(body.data.size) { "" }
+                            cityResidentialIdArray = Array(body.data.size) { "" }
+                            for (index in 0 until body.data.size) {
+                                val item = body.data[index]
+                                cityResidentialArray[index] = item.name
+                                cityResidentialIdArray[index] = item.id.toString()
+                            }
+                            val residential_adapter = ArrayAdapter(
+                                requireContext(),
+                                R.layout.dropdown_layout_item,
+                                cityResidentialArray
+                            )
+                            (binding.residentialCityId.editText as AutoCompleteTextView).setAdapter(
+                                residential_adapter
+                            )
+                            (binding.residentialCityId.editText as AutoCompleteTextView).setText("")
+                            selectedResidentialCityId = ""
+                            if (isEdit && !dataLoaded) {
+                                dataLoaded = true
+                                loadData()
+                            }
+                        } else {
+                            showError(body.meta.message)
+                        }
+                    } else {
+                        showError(response.message())
+                    }
+
+                }
+
+                override fun onFailure(call: Call<CityListResponse>, t: Throwable) {
+                    Utils.hideProgress()
+                    t.printStackTrace()
+                    showError(t.message!!)
+                }
+
+            })
+    }
+
+    private fun loadData() {
+        (binding.residentialStateId.editText as AutoCompleteTextView).setText(
+            (binding.residentialStateId.editText as AutoCompleteTextView).adapter.getItem(
+                stateIdArray.indexOf(dealerDataUpdate!!.residentialStateId.toString())
+            ).toString(), false
+        )
+        selectedResidentialStateId = dealerDataUpdate!!.residentialStateId.toString()
+        (binding.firmStateId.editText as AutoCompleteTextView).setText(
+            (binding.firmStateId.editText as AutoCompleteTextView).adapter.getItem(
+                stateIdArray.indexOf(dealerDataUpdate!!.firmStateId.toString())
+            ).toString(), false
+        )
+        selectedFirmStateId = dealerDataUpdate!!.firmStateId.toString()
+        (binding.firmCityId.editText as AutoCompleteTextView).setText(
+            (binding.firmCityId.editText as AutoCompleteTextView).adapter.getItem(
+                cityFirmIdArray.indexOf(dealerDataUpdate!!.firmCityId.toString())
+            ).toString(), false
+        )
+        selectedFirmCityId = dealerDataUpdate!!.firmCityId.toString()
+        (binding.residentialCityId.editText as AutoCompleteTextView).setText(
+            (binding.residentialCityId.editText as AutoCompleteTextView).adapter.getItem(
+                cityResidentialIdArray.indexOf(dealerDataUpdate!!.residentialCityId.toString())
+            ).toString(), false
+        )
+        selectedResidentialCityId = dealerDataUpdate!!.residentialCityId.toString()
+        binding.firmName.editText?.setText(dealerDataUpdate!!.firmName)
+        binding.dealerQualification.editText?.setText(dealerDataUpdate!!.dealerQualification)
+        binding.responsiblePersonName.editText?.setText(dealerDataUpdate!!.responsiblePersonName)
+        binding.residentialAddress.editText?.setText(dealerDataUpdate!!.residentialAddress)
+        binding.mobileNo.editText?.setText(dealerDataUpdate!!.mobileno.toString())
+        binding.whatsappNo.editText?.setText(dealerDataUpdate!!.whatsappno.toString())
+        binding.dateOfBirth.editText?.setText(dealerDataUpdate!!.birthdate)
+        binding.dateOfAnniversary.editText?.setText(dealerDataUpdate!!.anniversaryDate)
+        binding.yearOfEstablishment.editText?.setText(dealerDataUpdate!!.yearOfEstablishment.toString())
+        binding.natureOfFirm.editText?.setText(dealerDataUpdate!!.natureOfFirm)
+        binding.totalTurnover.editText?.setText(dealerDataUpdate!!.totalTurnover.toString())
+        binding.pesticide.editText?.setText(dealerDataUpdate!!.pesticide)
+        binding.fertilizers.editText?.setText(dealerDataUpdate!!.fertilizers)
+        binding.seeds.editText?.setText(dealerDataUpdate!!.seeds)
+        binding.pgrOther.editText?.setText(dealerDataUpdate!!.pgrOther)
+        binding.ownershipOfShop.editText?.setText(dealerDataUpdate!!.ownershipOfShop)
+        binding.ownershipOfGodown.editText?.setText(dealerDataUpdate!!.ownershipOfGodown)
+        binding.otherAgencyNames.editText?.setText(dealerDataUpdate!!.otherAgencyNames)
+        binding.gstNo.editText?.setText(dealerDataUpdate!!.gstNo)
+        binding.adharcardNo.editText?.setText(dealerDataUpdate!!.adharcardNo)
+        binding.panCardNo.editText?.setText(dealerDataUpdate!!.panCardNo)
+        binding.nameOfBank.editText?.setText(dealerDataUpdate!!.nameOfBank)
+        binding.bankAcNo.editText?.setText(dealerDataUpdate!!.bankAcNo)
+        binding.ifscCode.editText?.setText(dealerDataUpdate!!.ifscCode)
+        binding.insecticideLicenseNo.editText?.setText(dealerDataUpdate!!.insecticideLicenseNo)
+        binding.insecticideLicenseValidity.editText?.setText(dealerDataUpdate!!.insecticideLicenseValidity)
+        binding.fertilizerLicenseNo.editText?.setText(dealerDataUpdate!!.fertilizerLicenseNo)
+        binding.fertilizerLicenseValidity.editText?.setText(dealerDataUpdate!!.fertilizerLicenseValidity)
+        binding.amountOfFirstCheque.editText?.setText(dealerDataUpdate!!.amountOfFirstCheque.toString())
+        binding.amountOfFirstChequeNo.editText?.setText(dealerDataUpdate!!.amountOfFirstChequeNo)
+        binding.amountOfCheque2.editText?.setText(dealerDataUpdate!!.amountOfCheque2)
+        binding.amountOfChequeNo2.editText?.setText(dealerDataUpdate!!.amountOfChequeNo2)
+        binding.amountOfCheque3.editText?.setText(dealerDataUpdate!!.amountOfCheque3)
+        binding.amountOfChequeNo3.editText?.setText(dealerDataUpdate!!.amountOfChequeNo3)
+        binding.amountOfCheque4.editText?.setText(dealerDataUpdate!!.amountOfCheque4)
+        binding.amountOfChequeNo4.editText?.setText(dealerDataUpdate!!.amountOfChequeNo4)
+        binding.firmAddress.editText?.setText(dealerDataUpdate!!.firmAddress)
+        binding.firmTaluka.editText?.setText(dealerDataUpdate!!.firmTakula)
+        binding.firmZipcode.editText?.setText(dealerDataUpdate!!.firmZipcode.toString())
+//        binding.residentialAddress1.editText?.setText(dealerDataUpdate!!.)
+        binding.residentialTakula.editText?.setText(dealerDataUpdate!!.residentialTakula)
+        binding.residentialZipcode.editText?.setText(dealerDataUpdate!!.residentialZipcode)
+        GlideApp.with(requireContext())
+            .load(dealerDataUpdate!!.image)
+            .fitCenter()
+            .into(binding.profilePic)
+            .onLoadFailed(
+                ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.logo,
+                    requireContext().theme
+                )
+            )
+    }
+
+    private fun callGetFirmCityListApi(stateId: String) {
+        Utils.showProgress(requireContext())
+        APIClient.getApiInterface()
+            .getCityList(preference?.getString(AppConstant.SALESMAN_ID, ""), stateId)
+            .enqueue(object : Callback<CityListResponse> {
+                override fun onResponse(
+                    call: Call<CityListResponse>,
+                    response: Response<CityListResponse>
+                ) {
+                    Utils.hideProgress()
+                    val body = response.body()
+                    if (body != null) {
+                        if (body.meta.code.equals("200")) {
+                            cityFirmArray = Array(body.data.size) { "" }
+                            cityFirmIdArray = Array(body.data.size) { "" }
+                            for (index in 0 until body.data.size) {
+                                val item = body.data[index]
+                                cityFirmArray[index] = item.name
+                                cityFirmIdArray[index] = item.id.toString()
+                            }
+                            val firm_adapter = ArrayAdapter(
+                                requireContext(),
+                                R.layout.dropdown_layout_item,
+                                cityFirmArray
+                            )
+                            (binding.firmCityId.editText as AutoCompleteTextView).setAdapter(
+                                firm_adapter
+                            )
+                            (binding.firmCityId.editText as AutoCompleteTextView).setText("")
+                            selectedFirmCityId = ""
+
+                            if (isEdit && loadResidentialCityAgain) {
+                                loadResidentialCityAgain = false
+                                callGetResidentialCityListApi(dealerDataUpdate!!.residentialStateId.toString())
+                            }
+                        } else {
+                            showError(body.meta.message)
+                        }
+                    } else {
+                        showError(response.message())
+                    }
+
+                }
+
+                override fun onFailure(call: Call<CityListResponse>, t: Throwable) {
+                    Utils.hideProgress()
+                    t.printStackTrace()
+                    showError(t.message!!)
+                }
+
+            })
+    }
+
+    private fun callSubmitDetails() {
+        Utils.showProgress(requireContext())
+        val mediaType = "text/plain".toMediaType()
+        val salesman_id =
+            preference?.getString(AppConstant.SALESMAN_ID, "")!!.toRequestBody(mediaType)
+        val firm_name = binding.firmName.editText?.text.toString().toRequestBody(mediaType)
+        val dealer_qualification =
+            binding.dealerQualification.editText?.text.toString().toRequestBody(mediaType)
+        val responsible_person_name =
+            binding.responsiblePersonName.editText?.text.toString().toRequestBody(mediaType)
+        val residential_address =
+            binding.residentialAddress.editText?.text.toString().toRequestBody(mediaType)
+        val mobile_no = binding.mobileNo.editText?.text.toString().toRequestBody(mediaType)
+        val whatsapp_no = binding.whatsappNo.editText?.text.toString().toRequestBody(mediaType)
+        val date_of_birth = binding.dateOfBirth.editText?.text.toString().toRequestBody(mediaType)
+        val date_of_anniversary =
+            binding.dateOfAnniversary.editText?.text.toString().toRequestBody(mediaType)
+        val year_of_establishment =
+            binding.yearOfEstablishment.editText?.text.toString().toRequestBody(mediaType)
+        val nature_of_firm = binding.natureOfFirm.editText?.text.toString().toRequestBody(mediaType)
+        val total_turnover =
+            binding.totalTurnover.editText?.text.toString().toRequestBody(mediaType)
+        val pesticide = binding.pesticide.editText?.text.toString().toRequestBody(mediaType)
+        val fertilizers = binding.fertilizers.editText?.text.toString().toRequestBody(mediaType)
+        val pgr_other = binding.pgrOther.editText?.text.toString().toRequestBody(mediaType)
+        val ownership_of_shop =
+            binding.ownershipOfShop.editText?.text.toString().toRequestBody(mediaType)
+        val other_agency_names =
+            binding.otherAgencyNames.editText?.text.toString().toRequestBody(mediaType)
+        val gst_no = binding.gstNo.editText?.text.toString().toRequestBody(mediaType)
+        val adharcard_no = binding.adharcardNo.editText?.text.toString().toRequestBody(mediaType)
+        val pan_card_no = binding.panCardNo.editText?.text.toString().toRequestBody(mediaType)
+        val name_of_bank = binding.nameOfBank.editText?.text.toString().toRequestBody(mediaType)
+        val bank_ac_no = binding.bankAcNo.editText?.text.toString().toRequestBody(mediaType)
+        val ifsc_code = binding.ifscCode.editText?.text.toString().toRequestBody(mediaType)
+        val insecticide_license_no =
+            binding.insecticideLicenseNo.editText?.text.toString().toRequestBody(mediaType)
+        val insecticide_license_validity =
+            binding.insecticideLicenseValidity.editText?.text.toString().toRequestBody(mediaType)
+        val fertilizer_license_no =
+            binding.fertilizerLicenseNo.editText?.text.toString().toRequestBody(mediaType)
+        val fertilizer_license_validity =
+            binding.fertilizerLicenseValidity.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_first_cheque =
+            binding.amountOfFirstCheque.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_first_cheque_no =
+            binding.amountOfFirstChequeNo.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_cheque_2 =
+            binding.amountOfCheque2.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_cheque_no_2 =
+            binding.amountOfChequeNo2.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_cheque_3 =
+            binding.amountOfCheque3.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_cheque_no_3 =
+            binding.amountOfChequeNo3.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_cheque_4 =
+            binding.amountOfCheque4.editText?.text.toString().toRequestBody(mediaType)
+        val amount_of_cheque_no_4 =
+            binding.amountOfChequeNo4.editText?.text.toString().toRequestBody(mediaType)
+        val firm_address = binding.firmAddress.editText?.text.toString().toRequestBody(mediaType)
+        val firm_state_id = selectedFirmStateId.toRequestBody(mediaType)
+        val firm_city_id = selectedFirmCityId.toRequestBody(mediaType)
+        val firm_taluka = binding.firmTaluka.editText?.text.toString().toRequestBody(mediaType)
+        val firm_zipcode = binding.firmZipcode.editText?.text.toString().toRequestBody(mediaType)
+        val residential_address_1 =
+            binding.residentialAddress1.editText?.text.toString().toRequestBody(mediaType)
+        val residential_state_id = selectedResidentialStateId.toRequestBody(mediaType)
+        val residential_city_id = selectedResidentialCityId.toRequestBody(mediaType)
+        val residential_takula =
+            binding.residentialTakula.editText?.text.toString().toRequestBody(mediaType)
+        val residential_zipcode =
+            binding.residentialZipcode.editText?.text.toString().toRequestBody(mediaType)
+        val avatar = if (profilePictureFileName.isEmpty()) {
+            MultipartBody.Part.createFormData("image", "", "".toRequestBody(mediaType))
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                profilePictureFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData("image", file.name, fileBody)
+        }
+        val partnership_memorandum_of_firm_doc = if (partnershipMemorandumDocFileName.isEmpty()) {
+            MultipartBody.Part.createFormData(
+                "partenership_memorandum_of_firm_doc",
+                "",
+                "".toRequestBody(mediaType)
+            )
+        } else {
+            val file = File(
+                requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS),
+                partnershipMemorandumDocFileName
+            )
+            val fileBody: RequestBody = file.asRequestBody(
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    file.extension
+                )!!.toMediaType()
+            )
+            MultipartBody.Part.createFormData(
+                "partenership_memorandum_of_firm_doc",
                 file.name,
                 fileBody
             )
@@ -1007,7 +1509,7 @@ class AddDealerFragment : Fragment() {
             pancard_doc,
             electricity_bill_doc,
             rent_agreement_doc
-        ).enqueue(object: Callback<DealerRegistrationResponse>{
+        ).enqueue(object : Callback<DealerRegistrationResponse> {
             override fun onResponse(
                 call: Call<DealerRegistrationResponse>,
                 response: Response<DealerRegistrationResponse>
@@ -1017,7 +1519,10 @@ class AddDealerFragment : Fragment() {
                 if (body != null) {
                     val meta = body.meta
                     if (meta.code.equals("200")) {
-                        Handler().postDelayed(Runnable { (requireActivity() as MainActivity).onBackPressed() }, 1500)
+                        Handler().postDelayed(
+                            Runnable { (requireActivity() as MainActivity).onBackPressed() },
+                            1500
+                        )
                     }
                     showError(meta.message)
                 } else {
@@ -1104,11 +1609,12 @@ class AddDealerFragment : Fragment() {
                             }
                             REQUEST_CODE_FOR_PAN_CARD -> {
                                 panCardFileName = it.getString(nameIndex)
-                                binding.txtPanCardDocStatus.text = if (panCardFileName.isNotEmpty()) {
-                                    "Selected"
-                                } else {
-                                    "Not Selected"
-                                }
+                                binding.txtPanCardDocStatus.text =
+                                    if (panCardFileName.isNotEmpty()) {
+                                        "Selected"
+                                    } else {
+                                        "Not Selected"
+                                    }
                                 panCardFileName
                             }
                             REQUEST_CODE_FOR_ELECTRICITY_BILL -> {

@@ -2,7 +2,7 @@ package com.genetic.salesman.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class DealerRegistrationData {
+public class DealerFragmentItem {
 
 	@SerializedName("residential_address")
 	private String residentialAddress;
@@ -104,7 +104,7 @@ public class DealerRegistrationData {
 	private String userId;
 
 	@SerializedName("firm_zipcode")
-	private String firmZipcode;
+	private int firmZipcode;
 
 	@SerializedName("amount_of_first_cheque_no")
 	private String amountOfFirstChequeNo;
@@ -319,7 +319,7 @@ public class DealerRegistrationData {
 		return userId;
 	}
 
-	public String getFirmZipcode(){
+	public int getFirmZipcode(){
 		return firmZipcode;
 	}
 
@@ -434,7 +434,7 @@ public class DealerRegistrationData {
 	@Override
  	public String toString(){
 		return 
-			"Data{" + 
+			"DealerFragmentItem{" +
 			"residential_address = '" + residentialAddress + '\'' + 
 			",date = '" + date + '\'' + 
 			",electricity_bill_doc = '" + electricityBillDoc + '\'' + 

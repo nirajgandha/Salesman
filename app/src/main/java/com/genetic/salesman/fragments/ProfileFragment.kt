@@ -305,7 +305,7 @@ class ProfileFragment : Fragment() {
         (binding.salesManGender.editText as? AutoCompleteTextView)?.setAdapter(genderAdapter)
 
         val maritalStatusAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, maritalStatusItems)
-        (binding.salesManGender.editText as? AutoCompleteTextView)?.setAdapter(maritalStatusAdapter)
+        (binding.salesManMaritalStatus.editText as? AutoCompleteTextView)?.setAdapter(maritalStatusAdapter)
     }
 
     private fun getEmployeeDetail() {

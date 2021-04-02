@@ -15,9 +15,15 @@ public class ServerConfig {
     static final String GET_TAX_PERCENTAGE = "getTaxPecentage";
     static final String GET_PROFILE = "getEmployeeDetail";
     static final String UPDATE_PROFILE = "updateProfile";
-    static final String GET_DASHBOARD = "getDealerDashboard";
+    static final String GET_DASHBOARD = "getSalesmanDashboard";
     static final String ADD_DEALER = "delearRegistration";
+    static final String UPDATE_DEALER = "delearUpdate";
     static final String GET_STATE_LIST = "getStateList";
     static final String GET_CITY_LIST = "getCityList";
-    static final String GET_DEALER_LIST = "getDealerDetail";
+    static final String GET_DEALER_LIST = "getDelearList";
+    static final String GET_DAILY_REPORT_LIST = "dailyReportList";
+    static final String GET_DAILY_REPORT_DETAIL = "dailyReportDetail";
+    static final String GET_DEALER_DETAIL = "delearDetail";
+    static final String ADD_DAILY_REPORT = "addDailyReport";
+    static final String UPDATE_DAILY_REPORT = "updateDailyReport";
 }

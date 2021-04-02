@@ -70,7 +70,10 @@ class MoreFragment : Fragment() {
             ContactUsFragment()
         ) }
         binding.dealerRegister.setOnClickListener { (requireActivity() as MainActivity).openOtherFragment(
-            AddDealerFragment()
+            GetDealerListFragment()
+        ) }
+        binding.dailyReport.setOnClickListener { (requireActivity() as MainActivity).openOtherFragment(
+            GetDailyReportListFragment()
         ) }
         binding.logout.setOnClickListener {
             preference!!.clearAllPreferenceData()

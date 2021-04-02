@@ -101,7 +101,7 @@ public class DealerItem {
 	private String rentAgreementDoc;
 
 	@SerializedName("user_id")
-	private int userId;
+	private String userId;
 
 	@SerializedName("firm_zipcode")
 	private int firmZipcode;
@@ -315,7 +315,7 @@ public class DealerItem {
 		return rentAgreementDoc;
 	}
 
-	public int getUserId(){
+	public String getUserId(){
 		return userId;
 	}
 
@@ -434,7 +434,7 @@ public class DealerItem {
 	@Override
  	public String toString(){
 		return 
-			"DataItem{" + 
+			"DealerItem{" + 
 			"residential_address = '" + residentialAddress + '\'' + 
 			",date = '" + date + '\'' + 
 			",electricity_bill_doc = '" + electricityBillDoc + '\'' + 

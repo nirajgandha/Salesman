@@ -219,6 +219,15 @@ class MainActivity : AppCompatActivity(), ItemClickListener, NavigationDrawerIte
                 onItemClick(getString(R.string.menu_more))
             }
             is AddDealerFragment -> {
+                openOtherFragment(GetDealerListFragment())
+            }
+            is GetDealerListFragment -> {
+                onItemClick(getString(R.string.menu_more))
+            }
+            is DailyReportToAdmin -> {
+                openOtherFragment(GetDailyReportListFragment())
+            }
+            is GetDailyReportListFragment -> {
                 onItemClick(getString(R.string.menu_more))
             }
             else -> {
