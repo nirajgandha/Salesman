@@ -27,7 +27,6 @@
             android:orientation="vertical">
 
             <TextView
-                    android:textAllCaps="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -38,6 +37,7 @@
                 android:paddingEnd="@dimen/_35sdp"
                 android:paddingBottom="@dimen/_3sdp"
                 android:text="Salesman Detail"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp" />
 
@@ -46,25 +46,53 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:stretchColumns="1">
+                android:shrinkColumns="1">
 
                 <TableRow>
 
                     <TextView
-                    android:textAllCaps="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:text="Dealer"
+                        android:textAllCaps="true"
+                        android:textColor="#888888"
+                        android:textSize="@dimen/_12ssp" />
+
+                    <TextView
+                        android:id="@+id/dealer_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
+                        android:fontFamily="@font/montserrat_medium"
+                        android:gravity="end|center_vertical"
+                        android:paddingStart="@dimen/_10sdp"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingEnd="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_3sdp"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12ssp" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Name"
+                        android:textAllCaps="true"
                         android:textColor="#888888"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
-                    android:textAllCaps="true"
                         android:id="@+id/sales_man_name"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:fontFamily="@font/montserrat_medium"
@@ -73,7 +101,7 @@
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_3sdp"
-                        android:text="Salesman"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12ssp" />
                 </TableRow>
@@ -81,20 +109,19 @@
                 <TableRow>
 
                     <TextView
-                    android:textAllCaps="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Email Id"
+                        android:textAllCaps="true"
                         android:textColor="#888888"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
-                    android:textAllCaps="true"
                         android:id="@+id/email"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:fontFamily="@font/montserrat_medium"
@@ -103,7 +130,7 @@
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_3sdp"
-                        android:text="john.deo@gmail.com"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12ssp" />
                 </TableRow>
@@ -111,20 +138,19 @@
                 <TableRow>
 
                     <TextView
-                    android:textAllCaps="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Contact number"
+                        android:textAllCaps="true"
                         android:textColor="#888888"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
-                    android:textAllCaps="true"
                         android:id="@+id/contact"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:fontFamily="@font/montserrat_medium"
@@ -133,14 +159,13 @@
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_3sdp"
-                        android:text="+91 234 234 0000"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12ssp" />
                 </TableRow>
             </TableLayout>
 
             <TextView
-                    android:textAllCaps="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -151,6 +176,7 @@
                 android:paddingEnd="@dimen/_35sdp"
                 android:paddingBottom="@dimen/_3sdp"
                 android:text="Order Detail"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp" />
 
@@ -164,18 +190,17 @@
                 <TableRow>
 
                     <TextView
-                    android:textAllCaps="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Order Id"
+                        android:textAllCaps="true"
                         android:textColor="#888888"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
-                    android:textAllCaps="true"
                         android:id="@+id/order_no"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -187,6 +212,7 @@
                         android:paddingEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Order no"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12ssp" />
                 </TableRow>
@@ -194,18 +220,17 @@
                 <TableRow>
 
                     <TextView
-                    android:textAllCaps="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Date"
+                        android:textAllCaps="true"
                         android:textColor="#888888"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
-                    android:textAllCaps="true"
                         android:id="@+id/date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -217,6 +242,7 @@
                         android:paddingEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Date"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12ssp" />
                 </TableRow>
@@ -224,18 +250,17 @@
                 <TableRow>
 
                     <TextView
-                    android:textAllCaps="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_medium"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="Amount"
+                        android:textAllCaps="true"
                         android:textColor="#888888"
                         android:textSize="@dimen/_12ssp" />
 
                     <TextView
-                    android:textAllCaps="true"
                         android:id="@+id/amount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -247,13 +272,13 @@
                         android:paddingEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_3sdp"
                         android:text="amount"
+                        android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12ssp" />
                 </TableRow>
             </TableLayout>
 
             <TextView
-                    android:textAllCaps="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
@@ -264,6 +289,7 @@
                 android:paddingEnd="@dimen/_35sdp"
                 android:paddingBottom="@dimen/_3sdp"
                 android:text="Payment Detail"
+                android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/_14ssp" />
 
@@ -286,18 +312,17 @@
                     <TableRow>
 
                         <TextView
-                    android:textAllCaps="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_medium"
                             android:paddingTop="@dimen/_4sdp"
                             android:paddingBottom="@dimen/_3sdp"
                             android:text="Amount"
+                            android:textAllCaps="true"
                             android:textColor="#888888"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
-                    android:textAllCaps="true"
                             android:id="@+id/payment_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -309,6 +334,7 @@
                             android:paddingEnd="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_3sdp"
                             android:text="amount"
+                            android:textAllCaps="true"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12ssp" />
                     </TableRow>
@@ -316,18 +342,17 @@
                     <TableRow>
 
                         <TextView
-                    android:textAllCaps="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_medium"
                             android:paddingTop="@dimen/_4sdp"
                             android:paddingBottom="@dimen/_3sdp"
                             android:text="Date"
+                            android:textAllCaps="true"
                             android:textColor="#888888"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
-                    android:textAllCaps="true"
                             android:id="@+id/payment_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -339,27 +364,26 @@
                             android:paddingEnd="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_3sdp"
                             android:text="Date"
+                            android:textAllCaps="true"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12ssp" />
                     </TableRow>
 
 
-
                     <TableRow>
 
                         <TextView
-                    android:textAllCaps="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/montserrat_medium"
                             android:paddingTop="@dimen/_4sdp"
                             android:paddingBottom="@dimen/_3sdp"
                             android:text="Order Id"
+                            android:textAllCaps="true"
                             android:textColor="#888888"
                             android:textSize="@dimen/_12ssp" />
 
                         <TextView
-                    android:textAllCaps="true"
                             android:id="@+id/type"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -371,6 +395,7 @@
                             android:paddingEnd="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_3sdp"
                             android:text="Type"
+                            android:textAllCaps="true"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_12ssp" />
                     </TableRow>
@@ -382,11 +407,11 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="@dimen/_5sdp"
-                    app:layout_constraintTop_toTopOf="@+id/ll"
                     app:layout_constraintBottom_toBottomOf="@+id/ll"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/ll" />
+                    app:layout_constraintStart_toEndOf="@+id/ll"
+                    app:layout_constraintTop_toTopOf="@+id/ll" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -399,7 +424,6 @@
                 android:weightSum="1">
 
                 <TextView
-                    android:textAllCaps="true"
                     android:id="@+id/sendInvoice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -413,11 +437,11 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingBottom="@dimen/_10sdp"
                     android:text="Send Invoice"
+                    android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_12ssp" />
 
                 <TextView
-                    android:textAllCaps="true"
                     android:id="@+id/viewInvoice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -431,6 +455,7 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingBottom="@dimen/_10sdp"
                     android:text="View Invoice"
+                    android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_12ssp" />
             </LinearLayout>

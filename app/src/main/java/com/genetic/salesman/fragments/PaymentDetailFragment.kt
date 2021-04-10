@@ -90,6 +90,7 @@ class PaymentDetailFragment : Fragment() {
     }
 
     private fun loadDataFromResponse(paymentDetailData: PaymentDetailData) {
+        binding.dealerName.text = paymentDetailData.paymentDetail.dealerName
         binding.salesManName.text = paymentDetailData.paymentDetail.salemanName
         binding.email.text = paymentDetailData.paymentDetail.salesmanEmail
         binding.contact.text = paymentDetailData.paymentDetail.salesmanMobileno.toString()

@@ -84,6 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_36sdp"
         android:adjustViewBounds="true"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/_8sdp"
         app:layout_constraintTop_toTopOf="@+id/order_title"

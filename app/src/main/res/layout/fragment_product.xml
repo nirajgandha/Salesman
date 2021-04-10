@@ -37,7 +37,7 @@
         android:background="@drawable/right_rounded_red_bg">
 
         <TextView
-                    android:textAllCaps="true"
+            android:textAllCaps="true"
             android:layout_width="@dimen/_23sdp"
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1:1"
@@ -68,7 +68,8 @@
             app:layout_constraintStart_toEndOf="@+id/cartCounted"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/tv_cp"/>
+            android:id="@+id/tv_cp"
+            android:layout_marginStart="@dimen/_5sdp"/>
 
         <View
             android:id="@+id/view"

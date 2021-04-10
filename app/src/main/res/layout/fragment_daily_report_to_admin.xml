@@ -79,6 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Sales Man Id"
+                    android:visibility="gone"
                     app:hintTextColor="@color/product_option_dialog_title_background">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -349,7 +350,9 @@
                         style="@style/sales_form_field_address_style"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="date"/>
+                        android:drawableEnd="@drawable/ic_calendar"
+                        android:enabled="true"
+                        android:focusable="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 

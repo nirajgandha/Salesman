@@ -23,7 +23,8 @@ class DealerListFragmentAdapter(private var dealerFragmentArrayList: ArrayList<D
                 dealerListRecyclerItemBinding.responsiblePersonName.text = responsiblePersonName
                 dealerListRecyclerItemBinding.mobileNo.text = mobileno.toString()
                 dealerListRecyclerItemBinding.email.visibility = View.GONE
-                dealerListRecyclerItemBinding.icEdit.setOnClickListener { dealerListFragmentItemClickListener.onDealerFragmentItemClick(this) }
+                dealerListRecyclerItemBinding.icEdit.visibility = View.GONE
+                dealerListRecyclerItemBinding.root.setOnClickListener { dealerListFragmentItemClickListener.onDealerFragmentItemClick(this) }
             }
         }
     }

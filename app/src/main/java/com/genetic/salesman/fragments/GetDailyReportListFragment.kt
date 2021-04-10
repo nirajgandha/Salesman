@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.genetic.salesman.R
 import com.genetic.salesman.activity.MainActivity
@@ -22,6 +24,9 @@ import com.genetic.salesman.utils.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 
 class GetDailyReportListFragment : Fragment(), DailyReportListFragmentItemClickListener {
@@ -29,6 +34,11 @@ class GetDailyReportListFragment : Fragment(), DailyReportListFragmentItemClickL
     private val binding get() = _binding!!
     private var preference: Preference? = null
     private val dailyReportListFragmentItemClickListener: DailyReportListFragmentItemClickListener = this
+    private val CLICK_DRAG_TOLERANCE = 10f // Often, there will be a slight, unintentional, drag when the user taps the FAB, so we need to account for this.
+    private var downRawX: Float = 0f
+    private var downRawY: Float = 0f
+    private var dX: Float = 0f
+    private var dY:Float = 0f
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,18 +48,70 @@ class GetDailyReportListFragment : Fragment(), DailyReportListFragmentItemClickL
         binding.fab.setOnClickListener { openAddDailyReportToAdmin(null) }
         binding.fab.setOnLongClickListener { v ->
             v.setOnTouchListener { view, event ->
+                val layoutParams = view.layoutParams as MarginLayoutParams
                 when (event.actionMasked) {
-                    MotionEvent.ACTION_MOVE -> {
-                        view.x = event.rawX + (binding.fab.layoutParams.width.div(2))
-                        view.y = event.rawY + (binding.fab.layoutParams.height.div(2))
+                    MotionEvent.ACTION_DOWN -> {
+                        downRawX = event.rawX
+                        downRawY = event.rawY
+                        dX = view.x - downRawX
+                        dY = view.y - downRawY
+                        return@setOnTouchListener true
                     }
-                    MotionEvent.ACTION_UP -> view.setOnTouchListener(null)
+                    MotionEvent.ACTION_MOVE -> {
+                        val viewWidth = view.width
+                        val viewHeight = view.height
+                        val viewParent = view.parent as View
+                        val parentWidth = viewParent.width
+                        val parentHeight = viewParent.height
+                        var newX: Float = event.rawX + dX
+                        newX = max(
+                            layoutParams.leftMargin.toFloat(),
+                            newX
+                        ) // Don't allow the FAB past the left hand side of the parent
+
+                        newX = min(
+                            parentWidth - viewWidth - layoutParams.rightMargin.toFloat(),
+                            newX
+                        ) // Don't allow the FAB past the right hand side of the parent
+
+                        var newY: Float = event.rawY + dY
+                        newY = max(
+                            layoutParams.topMargin.toFloat(),
+                            newY
+                        ) // Don't allow the FAB past the top of the parent
+
+                        newY = min(
+                            parentHeight - viewHeight - layoutParams.bottomMargin.toFloat(),
+                            newY
+                        ) // Don't allow the FAB past the bottom of the parent
+
+
+                        view.animate()
+                            .x(newX)
+                            .y(newY)
+                            .setDuration(0)
+                            .start()
+                        return@setOnTouchListener true
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        val upRawX: Float = event.rawX
+                        val upRawY: Float = event.rawY
+
+                        val upDX = upRawX - downRawX
+                        val upDY = upRawY - downRawY
+
+                        if (abs(upDX) < CLICK_DRAG_TOLERANCE && abs(upDY) < CLICK_DRAG_TOLERANCE) { // A click
+                            return@setOnTouchListener view.performClick()
+                        } else {
+                            return@setOnTouchListener true
+                        }
+                    }
                     else -> {
+                        return@setOnTouchListener false
                     }
                 }
-                true
             }
-            true
+            return@setOnLongClickListener false
         }
         return binding.root
     }
@@ -80,7 +142,12 @@ class GetDailyReportListFragment : Fragment(), DailyReportListFragmentItemClickL
 
     private fun callGetDailyReportListApi() {
         Utils.showProgress(requireContext())
-        APIClient.getApiInterface().getDailyReportFragmentList(preference?.getString(AppConstant.SALESMAN_ID, ""))
+        APIClient.getApiInterface().getDailyReportFragmentList(
+            preference?.getString(
+                AppConstant.SALESMAN_ID,
+                ""
+            )
+        )
             .enqueue(object : Callback<DailyReportListResponse> {
                 override fun onResponse(
                     call: Call<DailyReportListResponse>,
@@ -90,8 +157,19 @@ class GetDailyReportListFragment : Fragment(), DailyReportListFragmentItemClickL
                     val body = response.body()
                     if (body != null) {
                         if (body.meta.code.equals("200")) {
-                            binding.dailyReportListRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-                            binding.dailyReportListRecyclerview.adapter = DailyReportListFragmentAdapter(body.data, dailyReportListFragmentItemClickListener, requireContext())
+                            val layoutManager = LinearLayoutManager(requireContext())
+                            binding.dailyReportListRecyclerview.layoutManager = layoutManager
+                            val decorationItem = DividerItemDecoration(
+                                requireContext(),
+                                layoutManager.orientation
+                            )
+                            binding.dailyReportListRecyclerview.addItemDecoration(decorationItem)
+                            binding.dailyReportListRecyclerview.adapter =
+                                DailyReportListFragmentAdapter(
+                                    body.data,
+                                    dailyReportListFragmentItemClickListener,
+                                    requireContext()
+                                )
                         } else {
                             showError(body.meta.message)
                         }

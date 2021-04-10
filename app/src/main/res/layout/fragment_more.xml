@@ -244,14 +244,6 @@
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"/>
-
                 <TextView
                     android:textAllCaps="true"
                     android:layout_width="match_parent"
@@ -260,7 +252,7 @@
                     android:paddingBottom="@dimen/_6sdp"
                     android:paddingStart="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_10sdp"
-                    android:text="Contact"
+                    android:text="Dealer management"
                     android:background="#3DFFC30A"
                     android:fontFamily="@font/montserrat_medium"
                     android:textSize="@dimen/_12ssp"
@@ -295,6 +287,14 @@
 
                 </LinearLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"/>
+
                 <LinearLayout
                     android:id="@+id/daily_report"
                     android:layout_width="match_parent"
@@ -323,13 +323,20 @@
 
                 </LinearLayout>
 
-                <View
+                <TextView
+                    android:textAllCaps="true"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:background="@android:color/darker_gray"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"/>
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp"
+                    android:text="Contact"
+                    android:background="#3DFFC30A"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:textSize="@dimen/_12ssp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="@dimen/_10sdp"/>
 
                 <LinearLayout
                     android:id="@+id/contact"

@@ -143,7 +143,7 @@ class DailyReportToAdmin : Fragment() {
                         requireContext().theme
                     )
                 )
-                binding.dealerFarmerDetailToggler.visibility = View.GONE
+                binding.dealerFarmerDetailLl.visibility = View.GONE
             } else {
                 binding.dealerFarmerDetailToggler.setImageDrawable(
                     ResourcesCompat.getDrawable(
@@ -308,6 +308,29 @@ class DailyReportToAdmin : Fragment() {
 
             DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
                 binding.date.editText?.setText("$dayOfMonth-${month + 1}-$year")
+            }, mYear, mMonth, mDay).show()
+        }
+
+        binding.dealerProductReviewDate.editText?.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            if (binding.dealerProductReviewDate.editText?.text.toString().isNotEmpty()) {
+                val splitter = binding.dealerProductReviewDate.editText?.text.toString().split("-")
+                if (binding.dealerProductReviewDate.editText?.text.toString().indexOf("-") == 2) {
+                    calendar.set(Calendar.DAY_OF_MONTH, splitter[0].toInt())
+                    calendar.set(Calendar.MONTH, splitter[1].toInt() - 1)
+                    calendar.set(Calendar.YEAR, splitter[2].toInt())
+                } else {
+                    calendar.set(Calendar.DAY_OF_MONTH, splitter[2].toInt())
+                    calendar.set(Calendar.MONTH, splitter[1].toInt() - 1)
+                    calendar.set(Calendar.YEAR, splitter[0].toInt())
+                }
+            }
+            val mYear = calendar.get(Calendar.YEAR)
+            val mMonth = calendar.get(Calendar.MONTH)
+            val mDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+            DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                binding.dealerProductReviewDate.editText?.setText("$dayOfMonth-${month + 1}-$year")
             }, mYear, mMonth, mDay).show()
         }
 

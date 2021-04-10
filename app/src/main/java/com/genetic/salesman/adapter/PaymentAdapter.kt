@@ -24,8 +24,12 @@ class PaymentAdapter(private var paymentItemArrayList: ArrayList<PaymentItem>, p
                 paymentScreenRecyclerItemBinding.orderNo.text = context.resources.getString(R.string.order_number, orderId)
                 paymentScreenRecyclerItemBinding.paymentAmount.text = context.resources.getString(R.string.amount_s,
                     totalAmount.toString())
-                val date = paymentDate.split(" ")[0].split("-")
-                paymentScreenRecyclerItemBinding.paymentDate.text = "${date[2]}-${date[1]}-${date[0]}"
+                val splitter = paymentDate.split(" ")[0].split("-")
+                paymentScreenRecyclerItemBinding.paymentDate.text = if (paymentDate.split(" ")[0].indexOf("-") == 2) {
+                    "${splitter[0]}-${splitter[1]}-${splitter[2]}"
+                } else {
+                    "${splitter[2]}-${splitter[1]}-${splitter[0]}"
+                }
                 paymentScreenRecyclerItemBinding.status.text = type
                 paymentScreenRecyclerItemBinding.root.setOnClickListener {
                     paymentItemClickListener.onPaymentItemClick(this)

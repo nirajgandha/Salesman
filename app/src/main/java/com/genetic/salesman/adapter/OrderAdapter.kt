@@ -30,12 +30,20 @@ class OrderAdapter(private var orderItemList: ArrayList<OrderItem>, private val 
                     orderScreenRecyclerItemBinding.lrUploaded.text = context.resources.getString(R.string.lr_uploaded_s, "Yes")
                 }
                 if (dueDate.isNotEmpty() && dueDate.length == "yyyy-mm-dd".length) {
-                    val date = dueDate.split("-")
-                    orderScreenRecyclerItemBinding.date.text = "${date[2]}-${date[1]}-${date[0]}"
                     val dateCal = Calendar.getInstance()
-                    dateCal.set(Calendar.YEAR, date[0].toInt())
-                    dateCal.set(Calendar.MONTH, date[1].toInt()-1)
-                    dateCal.set(Calendar.DAY_OF_MONTH, date[2].toInt())
+                    val splitter = dueDate.split(" ")[0].split("-")
+                    orderScreenRecyclerItemBinding.date.text = if (dueDate.split(" ")[0].indexOf("-") == 2) {
+                        dateCal.set(Calendar.YEAR, splitter[2].toInt())
+                        dateCal.set(Calendar.MONTH, splitter[1].toInt()-1)
+                        dateCal.set(Calendar.DAY_OF_MONTH, splitter[0].toInt())
+                        "${splitter[0]}-${splitter[1]}-${splitter[2]}"
+                    } else {
+                        dateCal.set(Calendar.YEAR, splitter[0].toInt())
+                        dateCal.set(Calendar.MONTH, splitter[1].toInt()-1)
+                        dateCal.set(Calendar.DAY_OF_MONTH, splitter[2].toInt())
+                        "${splitter[2]}-${splitter[1]}-${splitter[0]}"
+                    }
+
                     val timeDiff = Calendar.getInstance().timeInMillis - dateCal.timeInMillis
                     val days = TimeUnit.MILLISECONDS.toDays(timeDiff)
                     when {
@@ -56,18 +64,8 @@ class OrderAdapter(private var orderItemList: ArrayList<OrderItem>, private val 
                 orderScreenRecyclerItemBinding.amount.text = context.resources.getString(R.string.amount_s,
                     totalAmount.toString())
                 orderScreenRecyclerItemBinding.status.text = orderStatus
-                orderScreenRecyclerItemBinding.more.setOnClickListener {
-                    val popup = PopupMenu(context, orderScreenRecyclerItemBinding.more)
-                    popup.inflate(R.menu.order_navigation)
-                    popup.setOnMenuItemClickListener {
-                        if (it.itemId == R.id.view_detail) {
-                            orderItemClickListener.onOrderItemClick(this)
-                            popup.dismiss()
-                        }
-                        true
-                    }
-                    popup.show()
-
+                orderScreenRecyclerItemBinding.root.setOnClickListener {
+                    orderItemClickListener.onOrderItemClick(this)
                 }
             }
         }

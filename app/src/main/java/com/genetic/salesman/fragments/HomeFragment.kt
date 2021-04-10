@@ -143,22 +143,12 @@ class HomeFragment : Fragment() {
             recentOrder.orderAmount.orderTotalAmount.toString()
         )
         binding.txtViewDetail.text = recentOrder.orderList[0].orderStatus
-        binding.detail.setOnClickListener {
-            val popup = PopupMenu(requireContext(), binding.detail)
-            popup.inflate(R.menu.order_navigation)
-            popup.setOnMenuItemClickListener {
-                if (it.itemId == R.id.view_detail) {
-                    popup.dismiss()
-                    val bundle = Bundle()
-                    bundle.putString("orderId", recentOrder.orderList[0].id.toString())
-                    val orderDetailFragment = OrderDetailFragment()
-                    orderDetailFragment.arguments = bundle
-                    (requireActivity() as MainActivity).openOtherFragment(orderDetailFragment)
-                }
-                true
-            }
-            popup.show()
-
+        binding.recentOrderLayout.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("orderId", recentOrder.orderList[0].id.toString())
+            val orderDetailFragment = OrderDetailFragment()
+            orderDetailFragment.arguments = bundle
+            (requireActivity() as MainActivity).openOtherFragment(orderDetailFragment)
         }
         binding.txtMorePlusRecentOrder.setOnClickListener {
             (requireActivity() as MainActivity).onItemClick(resources.getString(R.string.menu_order))

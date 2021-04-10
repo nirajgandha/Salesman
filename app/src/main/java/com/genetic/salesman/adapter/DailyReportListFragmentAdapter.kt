@@ -38,7 +38,8 @@ class DailyReportListFragmentAdapter(
                 dailyReportRecyclerItemBinding.dealerName.text = dealerName
                 dailyReportRecyclerItemBinding.startKm.text = "Start Km: ${startKm.toString()}"
                 dailyReportRecyclerItemBinding.endKm.text = "End Km: ${endKm.toString()}"
-                dailyReportRecyclerItemBinding.icEdit.setOnClickListener {
+                dailyReportRecyclerItemBinding.icEdit.visibility = View.GONE
+                dailyReportRecyclerItemBinding.root.setOnClickListener {
                     dailyReportListFragmentItemClickListener.onDailyReportFragmentItemClick(
                         this
                     )

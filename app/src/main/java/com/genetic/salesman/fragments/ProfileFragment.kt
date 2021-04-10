@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import android.webkit.MimeTypeMap
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.genetic.salesman.R
 import com.genetic.salesman.activity.MainActivity
@@ -39,7 +43,7 @@ import java.io.FileOutputStream
 import java.util.*
 
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), TextWatcher {
     private var _binding: FragmentAddSalesmanBinding? = null
     private val binding get() = _binding!!
     private var preference: Preference? = null
@@ -306,6 +310,17 @@ class ProfileFragment : Fragment() {
 
         val maritalStatusAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_layout_item, maritalStatusItems)
         (binding.salesManMaritalStatus.editText as? AutoCompleteTextView)?.setAdapter(maritalStatusAdapter)
+
+        binding.checkboxSameAsCurrentAddress.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.salesManPermanentAddress.editText?.inputType = InputType.TYPE_NULL
+                binding.salesManPermanentAddress.editText?.text = binding.salesManCurrentAddress.editText?.text
+                binding.salesManCurrentAddress.editText?.addTextChangedListener(this)
+            } else {
+                binding.salesManPermanentAddress.editText?.inputType = InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS
+                binding.salesManCurrentAddress.editText?.removeTextChangedListener(this)
+            }
+        }
     }
 
     private fun getEmployeeDetail() {
@@ -328,11 +343,21 @@ class ProfileFragment : Fragment() {
                             (binding.salesManGender.editText as AutoCompleteTextView).setText(data.gender)
                             if (data.dob.length == "yyyy-mm-dd".length) {
                                 val split = data.dob.split("-")
-                                binding.salesManDob.editText?.setText("${split[2]}-${split[1]}-${split[0]}")
+                                val dates = if (data.dob.indexOf("-") == 2) {
+                                    "${split[0]}-${split[1]}-${split[2]}"
+                                } else {
+                                    "${split[2]}-${split[1]}-${split[0]}"
+                                }
+                                binding.salesManDob.editText?.setText(dates)
                             }
                             if (data.dateOfJoining.length == "yyyy-mm-dd".length) {
                                 val split = data.dateOfJoining.split("-")
-                                binding.salesManDateOfJoining.editText?.setText("${split[2]}-${split[1]}-${split[0]}")
+                                val dates = if (data.dateOfJoining.indexOf("-") == 2) {
+                                    "${split[1]}-${split[1]}-${split[2]}"
+                                } else {
+                                    "${split[2]}-${split[1]}-${split[0]}"
+                                }
+                                binding.salesManDateOfJoining.editText?.setText(dates)
                             }
                             binding.salesManMobile.editText?.setText(data.mobileno.toString())
                             (binding.salesManMaritalStatus.editText as AutoCompleteTextView).setText(data.maritalStatus)
@@ -518,5 +543,17 @@ class ProfileFragment : Fragment() {
 
     private fun showError(string: String) {
         Utils.showSnackBar(binding.root, string)
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        binding.salesManPermanentAddress.editText?.setText(s.toString())
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        binding.salesManPermanentAddress.editText?.setText(s.toString())
+    }
+
+    override fun afterTextChanged(s: Editable?) {
+        binding.salesManPermanentAddress.editText?.setText(s.toString())
     }
 }

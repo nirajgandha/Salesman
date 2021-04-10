@@ -86,7 +86,9 @@ class AddDealerFragment : Fragment() {
         val argument = arguments
         if (argument != null) {
             dealerId = argument.getString("editDealerId", "")
-            isEdit = true
+            if (dealerId.isNotEmpty()) {
+                isEdit = true
+            }
         }
         if (isEdit) {
             callGetDealerDetail()
@@ -533,9 +535,15 @@ class AddDealerFragment : Fragment() {
             val calendar = Calendar.getInstance()
             if (binding.dateOfBirth.editText?.text.toString().isNotEmpty()) {
                 val splitter = binding.dateOfBirth.editText?.text.toString().split("-")
-                calendar.set(Calendar.DAY_OF_MONTH, splitter[0].toInt())
-                calendar.set(Calendar.MONTH, splitter[1].toInt() - 1)
-                calendar.set(Calendar.YEAR, splitter[2].toInt())
+                if (binding.dateOfBirth.editText?.text.toString().indexOf("-") == 2) {
+                    calendar.set(Calendar.YEAR, splitter[2].toInt())
+                    calendar.set(Calendar.MONTH, splitter[1].toInt()-1)
+                    calendar.set(Calendar.DAY_OF_MONTH, splitter[0].toInt())
+                } else {
+                    calendar.set(Calendar.YEAR, splitter[0].toInt())
+                    calendar.set(Calendar.MONTH, splitter[1].toInt()-1)
+                    calendar.set(Calendar.DAY_OF_MONTH, splitter[2].toInt())
+                }
             }
             val mYear = calendar.get(Calendar.YEAR)
             val mMonth = calendar.get(Calendar.MONTH)
@@ -550,9 +558,15 @@ class AddDealerFragment : Fragment() {
             val calendar = Calendar.getInstance()
             if (binding.dateOfAnniversary.editText?.text.toString().isNotEmpty()) {
                 val splitter = binding.dateOfAnniversary.editText?.text.toString().split("-")
-                calendar.set(Calendar.DAY_OF_MONTH, splitter[0].toInt())
-                calendar.set(Calendar.MONTH, splitter[1].toInt() - 1)
-                calendar.set(Calendar.YEAR, splitter[2].toInt())
+                if (binding.dateOfAnniversary.editText?.text.toString().indexOf("-") == 2) {
+                    calendar.set(Calendar.YEAR, splitter[2].toInt())
+                    calendar.set(Calendar.MONTH, splitter[1].toInt() - 1)
+                    calendar.set(Calendar.DAY_OF_MONTH, splitter[0].toInt())
+                } else {
+                    calendar.set(Calendar.YEAR, splitter[0].toInt())
+                    calendar.set(Calendar.MONTH, splitter[1].toInt() - 1)
+                    calendar.set(Calendar.DAY_OF_MONTH, splitter[2].toInt())
+                }
             }
             val mYear = calendar.get(Calendar.YEAR)
             val mMonth = calendar.get(Calendar.MONTH)
